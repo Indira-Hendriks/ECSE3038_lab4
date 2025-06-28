@@ -178,7 +178,7 @@ pip install fastapi motor uvicorn python-dotenv
 uvicorn app:app --reload
 ```
 
-4. Use Postman and MongoDb to test.
+4. Use Postman, https://ecse3038-lab3-tester.netlify.app/ website UI and MongoDb to test.
 
 ---
 
