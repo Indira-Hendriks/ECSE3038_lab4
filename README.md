@@ -1,193 +1,193 @@
-ECSE3038 Lab 4 - RESTful API with FastAPI and MongoDB
-Overview
-This project implements a RESTful API server using FastAPI in Python, integrated with MongoDB via Motor (an async MongoDB driver). The API manages two main resources:
+# ECSE3038 Lab 4 - FastAPI MongoDB RESTful API
 
-Profile: A singular user profile containing username, role, and color attributes.
+## Project Overview
 
-Tank: Multiple water tank objects with location and GPS coordinates.
+This project demonstrates a RESTful API server built with **FastAPI** in Python, connected to a **MongoDB** database using the `motor` asynchronous driver. It manages a **single profile** and multiple **water tank entries**.
 
-The API demonstrates the use of standard HTTP request handlers: POST, GET, PATCH, and DELETE for CRUD operations on these resources. The server supports cross-origin requests from the ECSE3038 lab tester site.
+The API supports full CRUD operations and can be tested via tools like **Postman** or **Swagger UI** (`/docs`).
 
-Installation and Setup
-Python 3.9+
+## Features
 
-MongoDB Atlas cluster or local MongoDB
+* **MongoDB Integration**: Asynchronous communication using `motor`.
+* **Single Profile Limitation**: Only one profile document allowed.
+* **Tank Management**: Create, read, update, and delete tank entries.
+* **CORS Middleware**: Allows requests from the official lab tester site.
+* **Data Validation**: Enforced via `pydantic` models.
+* **Automatic Timestamping**: Profile's `last_updated` field updates when tank data changes.
 
-Dependencies installed via requirements.txt:
+---
 
-fastapi
+## API Routes and Examples
 
-uvicorn
+### POST `/profile`
 
-motor
+**Create the single profile object. Only one profile allowed.**
 
-python-dotenv
+#### Request Body Example:
 
-pydantic
-
-Create a .env file with your MongoDB connection string:
-
-bash
-Copy
-Edit
-MONGODB_URL="your_mongodb_connection_string_here"
-Run the app using:
-
-bash
-Copy
-Edit
-uvicorn app:app --reload
-API Endpoints and Usage
-Profile Endpoints
-GET /profile
-Description:
-Retrieve the single stored user profile.
-
-Expected Response (Before profile creation):
-
-json
-Copy
-Edit
-{}
-Expected Response (After profile creation):
-
-json
-Copy
-Edit
-{
-  "id": "507f1f77bcf86cd799439011",
-  "last_updated": "06/27/2025, 06:06:41 PM",
-  "username": "coolname",
-  "role": "Engineer",
-  "color": "#3478ff"
-}
-POST /profile
-Description:
-Create the user profile. Only one profile is allowed; duplicate attempts result in an error.
-
-Example Request:
-
-json
-Copy
-Edit
+```json
 {
   "username": "coolname",
   "role": "Engineer",
   "color": "#3478ff"
 }
-Expected Response:
+```
 
-json
-Copy
-Edit
+#### Expected Response:
+
+```json
 {
-  "id": "507f1f77bcf86cd799439011",
-  "last_updated": "06/27/2025, 06:06:41 PM",
+  "id": "60b8a9e9e4a3f4a67ccac3e2",
+  "last_updated": "06/27/2025, 06:32:09 PM",
   "username": "coolname",
   "role": "Engineer",
   "color": "#3478ff"
 }
-Error Response (If profile exists):
+```
 
-json
-Copy
-Edit
+<img width="453" alt="image" src="https://github.com/user-attachments/assets/100ccabf-d4e9-46af-8ba4-70fcf59c81d5" />
+
+---
+
+### GET `/profile`
+
+**Retrieve the profile object. Returns an empty object if none exists.**
+
+#### Expected Response:
+
+```json
 {
-  "detail": "Profile already exists"
+  "id": "60b8a9e9e4a3f4a67ccac3e2",
+  "last_updated": "06/27/2025, 06:32:09 PM",
+  "username": "coolname",
+  "role": "Engineer",
+  "color": "#3478ff"
 }
-Tank Endpoints
-POST /tank
-Description:
-Create a new tank entry with a unique ID, location, latitude, and longitude.
+```
 
-Example Request:
+---
 
-json
-Copy
-Edit
+### POST `/tank`
+
+**Create a new tank entry with a unique ID.**
+
+#### Request Body Example:
+
+```json
 {
-  "location": "Chemistry Department",
-  "lat": 26.262525,
-  "long": 262.3833333
+  "location": "Indira's Farm",
+  "lat": 83.8484,
+  "long": 35.39383
 }
-Expected Response:
+```
+<img width="452" alt="image" src="https://github.com/user-attachments/assets/67c7477d-5323-4e78-96b2-af4113596267" />
 
-json
-Copy
-Edit
+#### Expected Response:
+
+```json
 {
-  "id": "0f34995e-4ee8-4cce-9636-52110ea4bacd",
-  "location": "Chemistry Department",
-  "lat": 26.262525,
-  "long": 262.3833333
+  "id": "6c344168-4756-43ac-927b-d29b790ba506",
+  "location": "Indira's Farm",
+  "lat": 83.8484,
+  "long": 35.39383
 }
-GET /tank
-Description:
-Retrieve a list of all stored tanks.
+```
 
-Expected Response:
+---
 
-json
-Copy
-Edit
+### GET `/tank`
+
+**Retrieve a list of all stored tanks.**
+
+#### Expected Response:
+
+```json
 [
   {
-    "id": "0f34995e-4ee8-4cce-9636-52110ea4bacd",
-    "location": "Chemistry Department",
-    "lat": 26.262525,
-    "long": 262.3833333
+    "id": "601394d4-25c4-4e73-9fae-b380e0e4466a",
+    "location": "Engineering Departmentt",
+    "lat": 189.41,
+    "long": -67.743
   },
-  {
-    "id": "c8944b35-825c-4eae-b6a7-52c947829edf",
-    "location": "Engineering Department",
-    "lat": 26.2525,
-    "long": 19.3833333
-  }
+ {
+  "id": "6c344168-4756-43ac-927b-d29b790ba506",
+  "location": "Indira's Farm",
+  "lat": 83.8484,
+  "long": 35.39383
+}
 ]
-PATCH /tank/{id}
-Description:
-Update an existing tank's attributes (location, lat, long). Partial updates are allowed.
+```
+<img width="491" alt="image" src="https://github.com/user-attachments/assets/e2b0f63e-3edd-4468-97ae-cb46bca54c28" />
 
-Example Request:
+---
 
-json
-Copy
-Edit
+### PATCH `/tank/{id}`
+
+**Update a specific tank entry**
+
+#### Request Body Example:
+
+```json
 {
-  "location": "Old Chemistry Department"
+  "location": "Updated location"
 }
-Expected Response:
+```
 
-json
-Copy
-Edit
+#### Expected Response:
+
+```json
 {
-  "id": "0f34995e-4ee8-4cce-9636-52110ea4bacd",
-  "location": "Old Chemistry Department",
-  "lat": 26.262525,
-  "long": 262.3833333
+  "id": "a8bfb9e1-268f-41e1-b85f-77c9760547f3",
+  "location": "Updated location",
+  "lat": 18.004741,
+  "long": -76.748753
 }
-Error Response (If tank not found):
+```
 
-json
-Copy
-Edit
-{
-  "detail": "Tank not found"
-}
-DELETE /tank/{id}
-Description:
-Delete a specific tank entry by ID.
+---
 
-Expected Response:
+### DELETE `/tank/{id}`
 
-No content, status code 204.
+**Deletes a tank with the specified ID.**
 
-Error Response (If tank not found):
+#### Expected Response:
 
-json
-Copy
-Edit
-{
-  "detail": "Tank not found"
-}
+* No content (HTTP 204 No Content)
+
+---
+
+## How to Run the App
+
+1. Create a `.env` file and set the following:
+
+```
+MONGODB_URL=mongodb+srv://<username>:<password>@cluster.mongodb.net/ECSE3038?retryWrites=true&w=majority
+```
+
+2. Create a virtual environment and install dependencies:
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install fastapi motor uvicorn python-dotenv
+```
+
+3. Run the app:
+
+```bash
+uvicorn app:app --reload
+```
+
+4. Use Postman and MongoDb to test.
+
+---
+
+## Notes
+
+* If you try to POST a second profile, it will return a 400 error.
+* MongoDB Object IDs are automatically generated for tanks.
+* All tank changes automatically update the profile's `last_updated` timestamp.
+
+* example terminal outputs:
+* <img width="613" alt="image" src="https://github.com/user-attachments/assets/5c746a96-01e4-49b5-bc8d-22af8098375c" />
+
